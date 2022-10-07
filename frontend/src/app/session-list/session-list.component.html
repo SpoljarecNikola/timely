@@ -1,0 +1,82 @@
+<div class="container">
+    <div class="card my-5">
+    <div class="card-body">
+      <div>
+        <select (change)="onTableSizeChange($event)">
+        <option *ngFor="let size of tableSizes">{{size}}</option>
+        </select>
+      </div>
+        <table class="table table-bordered table-striped" id="tableSession">
+        <thead class="thead-dark">
+            <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Start</th>
+            <th scope="col">End</th>
+            <th scope="col">Duration</th>
+            <th scope="col">Update</th>
+            <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let session of sessions | paginate:{
+              itemsPerPage: tableSize,
+              currentPage: page,
+              totalItems: count
+            }; let i = index ">
+            <td>{{ session.name }}</td>
+            <td>{{  session.start  | date:'dd.MM.yyyy HH:mm'}}</td>
+            <td>{{  session.end  | date:'dd.MM.yyyy HH:mm'}}</td>
+            <td>{{session.duration | date:'HH:mm:ss'}}</td>
+            <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" (click)="edit(session)">Update</button></td>
+            <td><button type="button" class="btn btn-danger" (click)="deleteSession(session.id)">Delete</button></td>
+            </tr>
+        </tbody>
+        </table>
+        <div>
+          <pagination-controls
+          previousLabel="Prev"
+          nextLabel="Next"
+          (pageChange)="onTableDataChange($event)"></pagination-controls>
+        </div>
+        <div>
+          <button class="btn btn-primary"(click)="exportToExcel()">Export to Excel</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Update session</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #updateForm="ngForm" (ngSubmit)="updateSession()">
+            <div class="form-group">
+                <label for="name">Session Name :</label>
+                <input type="text" #name [(ngModel)]="sessionToUpdate.name" name="name" id="name" class="form-control"
+                placeholder="Session Name">
+          </div>
+          <div class="form-group">
+            <label for="start">Session start :</label>
+            <input type="text" disabled #start [(ngModel)]="sessionToUpdate.start" name="start" id="start"
+              class="form-control" placeholder="Session Start">
+          </div>
+          <div class="form-group">
+            <label for="end">Session end :</label>
+            <input type="text" disabled #end [(ngModel)]="sessionToUpdate.end" name="end" id="end"
+              class="form-control" placeholder="Session End">
+          </div>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary w-100">
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
